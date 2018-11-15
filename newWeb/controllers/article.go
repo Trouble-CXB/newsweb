@@ -33,17 +33,21 @@ func (this *ArticleController) ShowArticleList() {
 	//qs.All(&articles)
 	//beego.Info(articles)
 
-	/////实现分页/////
+		/////实现分页/////
 	//获取总记录数
-	count, _ := qs.Count()
+	typeName:=this.GetString("select")
+	beego.Info("select=",typeName)
+
+	if typeName == "" {
+		typeName = "娱乐新闻"
+	}
+	count, _ := qs.RelatedSel("ArticleType").Filter("ArticleType__TypeName",typeName).Count()
+	beego.Info("count=",count)
 	//每页多少条记录
 	pageSize := int64(2)
 	//获总页数
 	pageCount := math.Ceil(float64(count) / float64(pageSize))
 
-	//把数据传递给视图
-	this.Data["count"] = count
-	this.Data["pageCount"] = pageCount
 
 	//获取首页末页数据
 	//pageIndex  当前页
@@ -54,24 +58,25 @@ func (this *ArticleController) ShowArticleList() {
 	//获取分页的数据
 	start := pageSize * (int64(pageIndex) - 1)
 	//RelatedSel	一对多关系表查询中，用来制定
-	qs.Limit(pageSize,start).RelatedSel("ArticleType").All(&articles)
+	//qs.Limit(pageSize,start).RelatedSel("ArticleType").All(&articles)
 
-	this.Data["pageIndex"] = pageIndex
-	this.Data["articles"] = articles
 
 	errmsg := this.GetString("errmsg")
 	if errmsg != "" {
 		this.Data["errmsg"] = errmsg
 	}
-
 	//根据传递的类型获取相应的文章
 	//获取数据
-	typeName:=this.GetString("select")
-	this.Data["typeName"] = typeName
-
-	//qs.Limit(pageSize,start).RelatedSel("ArticleType").Filter("ArticleType_TypeName",typeName).All(&articles)
+	//typeName:=this.GetString("select")
 	qs.Limit(pageSize,start).RelatedSel("ArticleType").Filter("ArticleType__TypeName",typeName).All(&articles)
+	beego.Info("articles=",articles)
 
+	//把数据传递给视图
+	this.Data["pageIndex"] = pageIndex
+	this.Data["articles"] = articles
+	this.Data["count"] = count
+	this.Data["pageCount"] = pageCount
+	this.Data["typeName"] = typeName
 	this.Layout = "layout.html"
 	this.TplName = "index.html"
 }

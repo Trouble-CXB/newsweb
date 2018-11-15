@@ -7,9 +7,7 @@
         <form method="get" action="/article/articleList" class="from">
             <select name="select" id="select" class="sel_opt">
             {{range .articleTypes}}
-                <option {{if compare $.typeName .TypeName}} selected="selected" {{else}} {{end}}>
-                {{.TypeName}}
-                </option>
+                <option {{if compare $.typeName .TypeName}} selected="true"{{else}} {{end}}>{{.TypeName}}</option>
             {{end}}
             </select>
         </form>
@@ -40,10 +38,10 @@
         </table>
 
         <ul class="pagenation">
-            <li><a href="/article/articleList?pageIndex=1">首页</a></li>
-            <li><a href="/article/articleList?pageIndex={{.pageIndex | PrePage}}">上一页 </a></li>
-            <li><a href="/article/articleList?pageIndex={{NextPage .pageIndex .pageCount}}">下一页</a></li>
-            <li><a href="/article/articleList?pageIndex={{.pageCount}}">末页</a></li>
+            <li><a href="/article/articleList?pageIndex=1&select={{.typeName}}">首页</a></li>
+            <li><a href="/article/articleList?pageIndex={{.pageIndex | PrePage}}&select={{.typeName}}">上一页 </a></li>
+            <li><a href="/article/articleList?pageIndex={{NextPage .pageIndex .pageCount}}&select={{.typeName}}">下一页</a></li>
+            <li><a href="/article/articleList?pageIndex={{.pageCount}}&select={{.typeName}}">末页</a></li>
             <li>共{{.count}}条记录/共{{.pageCount}}页/当前{{.pageIndex}}页</li>
         </ul>
     </div>
